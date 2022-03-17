@@ -3,7 +3,7 @@
 
 A fun little attempt at building minesweeper game around public api
 
-Take a look: [🔗 link](sagas-wss-minesweeper.vercel.app)
+Take a look: [🔗 link](https://sagas-wss-minesweeper.vercel.app)
 
 ### Getting started
 - Pull the lib down
@@ -30,3 +30,4 @@ Take a look: [🔗 link](sagas-wss-minesweeper.vercel.app)
 - [ ] More tests
 - [ ] CSS variables
 - [ ] Unbundle from react-scripts to make it a proper app
+- [ ] Proper mobile
