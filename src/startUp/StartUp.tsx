@@ -14,7 +14,6 @@ const StartUp = () => {
   const commonStyles = generateCommonStyles();
 
   const handleLevelSelection = (level: number) => {
-    console.log(level);
     dispatch(createLevelPendingAction(level));
   };
 

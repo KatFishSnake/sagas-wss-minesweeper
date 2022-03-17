@@ -18,7 +18,7 @@ type StateType = {
   map: null | GameMapType;
 };
 
-const INITIAL_STATE: StateType = {
+export const INITIAL_STATE: StateType = {
   levelValue: null,
   levelCreated: null,
   isGameOver: false,
