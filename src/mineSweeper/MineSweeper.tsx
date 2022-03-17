@@ -1,36 +1,43 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {} from "./mineSweeperAction";
-import { makeStyles } from "@material-ui/core";
-import { RootState } from "../types";
+import { useSelector } from "react-redux";
+import { Grid, AutoSizer } from "react-virtualized";
 
-const digitToLevel: { [key: number]: string } = {
-  1: "Simple",
-  2: "Medium",
-  3: "Hard",
-  4: "Extra Hard",
-};
-
-const generateStyles = makeStyles({
-  button: {
-    color: "red",
-  },
-});
+import type { RootState } from "../types";
+import MineSweeperHeader from "../mineSweeperHeader/MineSweeperHeader";
+import MineSweeperCell from "../mineSweeperCell/MineSweeperCell";
+import generateStyles from "./mineSweeperStyles";
 
 const MineSweeper = () => {
-  // const dispatch = useDispatch();
-  // const styles = generateStyles();
+  const styles = generateStyles();
   const levelMap = useSelector((state: RootState) => state.map);
-  const levelValue = useSelector((state: RootState) => state.levelValue);
+
+  if (!levelMap) return null;
+
+  const cellRenderer = ({ columnIndex, key, rowIndex, style }: any) => (
+    <div key={key} style={style}>
+      <MineSweeperCell cell={levelMap?.[rowIndex][columnIndex]} />
+    </div>
+  );
 
   return (
-    <div>
-      <p>Mine sweeper game</p>
-      <p>Selected level: {levelValue && digitToLevel[levelValue]}</p>
-      <div>
-        {levelMap?.map((o: any) => {
-          return <div>{o.map((i: any) => ".")}</div>;
-        })}
+    <div className={styles.main}>
+      <MineSweeperHeader></MineSweeperHeader>
+      <div className={styles.gameMap}>
+        <AutoSizer>
+          {({ width, height }) => (
+            <Grid
+              cellRenderer={cellRenderer}
+              columnCount={levelMap[0].length}
+              columnWidth={25}
+              height={height}
+              rowCount={levelMap.length}
+              rowHeight={25}
+              width={width}
+              overscanColumnCount={10}
+              overscanRowCount={10}
+              className={styles.innerContainerGrid}
+            />
+          )}
+        </AutoSizer>
       </div>
     </div>
   );

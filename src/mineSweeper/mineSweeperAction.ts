@@ -8,4 +8,5 @@ export const triggerUpdateMapAction = createAction("trigger-map-update");
 export const openCellAction =
   createAction<{ x: number; y: number }>("open-cell");
 
-export const showEndLevel = createAction("show-end-level");
+export const gameOver = createAction("game-over");
+export const resetGame = createAction("reset-game");

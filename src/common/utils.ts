@@ -1,5 +1,11 @@
 import { defaultCell } from "./constants";
-import { GameMapType } from "./types";
+import { GameMapType } from "../types";
+
+const determineOrderType = (row: number, col: number): "even" | "odd" => {
+  if (row % 2 === 1) return col % 2 === 1 ? "even" : "odd";
+  if (row % 2 === 0) return col % 2 === 1 ? "odd" : "even";
+  return "even";
+};
 
 export const transformMapToList = (mapString: string) => {
   const parsedMap: GameMapType = [];
@@ -13,19 +19,22 @@ export const transformMapToList = (mapString: string) => {
           return {
             ...defaultCell,
             isEmpty: true,
-            position: [colIndex, rowIndex],
+            orderType: determineOrderType(rowIndex, colIndex),
+            position: { x: colIndex, y: rowIndex },
           };
         else if (char === "*")
           return {
             ...defaultCell,
             isMine: true,
-            position: [colIndex, rowIndex],
+            orderType: determineOrderType(rowIndex, colIndex),
+            position: { x: colIndex, y: rowIndex },
           };
         else
           return {
             ...defaultCell,
             value: Number(char),
-            position: [colIndex, rowIndex],
+            orderType: determineOrderType(rowIndex, colIndex),
+            position: { x: colIndex, y: rowIndex },
           };
       });
     parsedMap.push(parsedGroup);

@@ -1,6 +1,10 @@
 import { createReducer, PayloadAction } from "@reduxjs/toolkit";
 
-import { updateMapAction } from "../mineSweeper/mineSweeperAction";
+import {
+  updateMapAction,
+  gameOver,
+  resetGame,
+} from "../mineSweeper/mineSweeperAction";
 import {
   createLevelAction,
   createLevelPendingAction,
@@ -10,16 +14,25 @@ import { GameMapType } from "../types";
 type StateType = {
   levelValue: null | number;
   levelCreated: null | boolean;
+  isGameOver: boolean;
   map: null | GameMapType;
 };
 
 const INITIAL_STATE: StateType = {
   levelValue: null,
   levelCreated: null,
+  isGameOver: false,
   map: null,
 };
 
 const commonReducer = createReducer(INITIAL_STATE, (builder) => {
+  builder.addCase(resetGame.type, (state) => {
+    state.levelValue = INITIAL_STATE.levelValue;
+    state.levelCreated = INITIAL_STATE.levelCreated;
+    state.isGameOver = INITIAL_STATE.isGameOver;
+    state.map = INITIAL_STATE.map;
+  });
+
   builder.addCase(
     updateMapAction.type,
     (state, { payload: newMap }: PayloadAction<GameMapType>) => {
@@ -36,6 +49,10 @@ const commonReducer = createReducer(INITIAL_STATE, (builder) => {
 
   builder.addCase(createLevelAction.type, (state) => {
     state.levelCreated = true;
+  });
+
+  builder.addCase(gameOver.type, (state) => {
+    state.isGameOver = true;
   });
 });
 

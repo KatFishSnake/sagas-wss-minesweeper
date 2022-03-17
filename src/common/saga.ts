@@ -4,13 +4,13 @@ import { eventChannel } from "redux-saga";
 import { Channel } from "@redux-saga/types";
 import { w3cwebsocket as WebSocketType } from "websocket";
 
-import { SOCKET_URL } from "../constants";
-import { transformMapToList } from "../utils";
+import { SOCKET_URL } from "./constants";
+import { transformMapToList } from "./utils";
 import {
   triggerUpdateMapAction,
   updateMapAction,
   openCellAction,
-  showEndLevel,
+  gameOver,
 } from "../mineSweeper/mineSweeperAction";
 import {
   createLevelAction,
@@ -36,13 +36,19 @@ export function* subscribe(ws: WebSocketType) {
           // When cell is opened and clear, refetch the map
           emitter(triggerUpdateMapAction());
           break;
-        case "open: You lose":
-          emitter(showEndLevel());
+        case "open: You lose": {
+          emitter(triggerUpdateMapAction());
+          emitter(gameOver());
           break;
+        }
         default: {
-          if (value.includes("□□")) {
+          // Not ideal but would work for game in progress and end of the game
+          if (value.includes("□") || value.includes("*")) {
             const parsedMapList = transformMapToList(value);
             emitter(updateMapAction(parsedMapList));
+
+            // Not sure, but assume that user wins when there's no □
+            if (!value.includes("□")) emitter(gameOver());
           }
           break;
         }
@@ -72,8 +78,7 @@ function connect() {
 function* read(ws: WebSocketType) {
   const channel: Channel<any> = yield call(subscribe, ws);
   while (true) {
-    let action: Action<string> = yield take(channel);
-    console.log("Action", action);
+    const action: Action<string> = yield take(channel);
     yield put(action);
   }
 }
@@ -86,7 +91,6 @@ function* write(ws: WebSocketType) {
   while (true) {
     const action: { type: string; payload: any } = yield take();
     let message = "help";
-    console.log(action.type);
     switch (action.type) {
       case createLevelPendingAction.type:
         message = `new ${action.payload}`;
